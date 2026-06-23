@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logoUrl from "../logo.png";
 
 /**
@@ -58,6 +58,9 @@ import logoUrl from "../logo.png";
 
 const PHONE_DISPLAY = "(512) 555-0142";
 const PHONE_HREF = "tel:+15125550142";
+// Web3Forms public access key (safe to expose in client code — designed for
+// static sites; it only allows sending mail to the registered inbox).
+const WEB3FORMS_ACCESS_KEY = "421e1251-78ae-4913-8866-bd63c87beec4";
 
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
@@ -573,12 +576,6 @@ function ServiceArea() {
 function LeadForm() {
   const [status, setStatus] = useState("idle"); // idle | submitting | success | error
   const [error, setError] = useState("");
-  // Stable idempotency key per form session — prevents duplicate leads on
-  // double-click / retries. The server enforces it (see api/lead.js).
-  const idempotencyKey = useRef(
-    (typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID()) ||
-      `lead-${Date.now()}-${Math.random().toString(36).slice(2)}`
-  );
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -587,27 +584,26 @@ function LeadForm() {
 
     const form = e.currentTarget;
     const payload = {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: `New repair request: ${form.appliance.value} — ${form.name.value.trim()}`,
+      from_name: "Apex Appliance Solutions Website",
       name: form.name.value.trim(),
       phone: form.phone.value.trim(),
       appliance: form.appliance.value,
       issue: form.issue.value.trim(),
+      botcheck: form.botcheck?.checked || false,
     };
 
     try {
-      const res = await fetch("/api/lead", {
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Idempotency-Key": idempotencyKey.current,
-        },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify(payload),
       });
-
-      if (res.status === 429) {
-        const retry = res.headers.get("Retry-After");
-        throw new Error(`Too many requests. Please try again${retry ? ` in ${retry}s` : " shortly"}.`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) {
+        throw new Error("Something went wrong. Please call us at " + PHONE_DISPLAY);
       }
-      if (!res.ok) throw new Error("Something went wrong. Please call us at " + PHONE_DISPLAY);
 
       setStatus("success");
       form.reset();
@@ -669,6 +665,16 @@ function LeadForm() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate className="space-y-5">
+                {/* Honeypot for spam bots (Web3Forms) — hidden from real users */}
+                <input
+                  type="checkbox"
+                  name="botcheck"
+                  className="hidden"
+                  style={{ display: "none" }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                />
                 <div className="grid gap-5 sm:grid-cols-2">
                   <FloatingField id="name" label="Full name" type="text" autoComplete="name" required />
                   <FloatingField id="phone" label="Phone number" type="tel" autoComplete="tel" required />
