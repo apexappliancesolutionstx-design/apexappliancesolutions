@@ -163,10 +163,8 @@ function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ease-out ${
-        scrolled
-          ? "border-slate-200 bg-white/90 backdrop-blur shadow-sm"
-          : "border-transparent bg-white/70 backdrop-blur"
+      className={`sticky top-0 z-50 w-full border-b bg-white transition-all duration-300 ease-out ${
+        scrolled ? "border-slate-200 shadow-sm" : "border-transparent"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
