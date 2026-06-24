@@ -223,7 +223,7 @@ async function handleLead(req, sendJson) {
   const delivered = await sendLeadEmail(clean, ip);
   if (!delivered.ok) {
     return sendJson(502, {
-      error: "We couldn't submit your request just now. Please call us at (512) 555-0142.",
+      error: "We couldn't submit your request just now. Please call us at (267) 367-8852.",
     });
   }
 

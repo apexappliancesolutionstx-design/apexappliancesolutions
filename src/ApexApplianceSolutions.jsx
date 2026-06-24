@@ -22,7 +22,7 @@ import logoUrl from "../logo.png";
  *    "name": "Apex Appliance Solutions",
  *    "description": "Fast, licensed appliance repair in Leander, TX. Same-day refrigerator, washer, dryer, oven, range and dishwasher repair across Williamson County.",
  *    "url": "https://apexappliancesolutions.com",
- *    "telephone": "+1-512-555-0142",
+ *    "telephone": "+1-267-367-8852",
  *    "image": "https://apexappliancesolutions.com/og-image.jpg",
  *    "priceRange": "$$",
  *    "areaServed": [
@@ -56,8 +56,8 @@ import logoUrl from "../logo.png";
  * ──────────────────────────────────────────────────────────────────────────
  */
 
-const PHONE_DISPLAY = "(512) 555-0142";
-const PHONE_HREF = "tel:+15125550142";
+const PHONE_DISPLAY = "(267) 367-8852";
+const PHONE_HREF = "tel:+12673678852";
 // Web3Forms public access key (safe to expose in client code — designed for
 // static sites; it only allows sending mail to the registered inbox).
 const WEB3FORMS_ACCESS_KEY = "421e1251-78ae-4913-8866-bd63c87beec4";
